@@ -1,0 +1,34 @@
+# app.py
+from flask import Flask, jsonify
+from flask_cors import CORS
+from routes.admin import admin_bp
+from routes.auth import auth_bp
+
+
+def create_app():
+    app = Flask(__name__)
+    CORS(app)
+
+    register_blueprints(app)
+
+    @app.route('/health', methods=['GET'])
+    def health():
+        return jsonify({
+            "status": "OK",
+            "message": "Backend Flask berjalan"
+        })
+
+    return app
+
+
+def register_blueprints(app):
+    # Daftarkan semua blueprint sebelum app.run().
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
+
+
+app = create_app()
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
