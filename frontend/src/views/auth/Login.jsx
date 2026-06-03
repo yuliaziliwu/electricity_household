@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { MdLogin } from "react-icons/md";
 
 import useAuth, { getRedirectPathByRole } from "hooks/useAuth";
 
@@ -37,12 +38,12 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
-      <section className="mx-auto grid min-h-[calc(100vh-64px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1fr_420px]">
+    <main className="min-h-screen bg-slate-100 px-4 py-8 text-slate-900">
+      <section className="mx-auto grid min-h-[calc(100vh-64px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1fr_440px]">
         <div className="max-w-2xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-normal text-emerald-700">
+          <div className="mb-5 inline-flex items-center rounded-md bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
             Sistem Listrik Rumah Tangga
-          </p>
+          </div>
           <h1 className="text-4xl font-bold leading-tight text-slate-950 md:text-5xl">
             Masuk untuk memantau profil konsumsi listrik rumah.
           </h1>
@@ -54,9 +55,12 @@ export default function Login() {
 
         <form
           onSubmit={handleSubmit}
-          className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+          className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70"
         >
-          <div className="mb-6">
+          <div className="mb-6 rounded-md bg-slate-50 p-4">
+            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-emerald-700 text-white">
+              <MdLogin className="h-6 w-6" />
+            </div>
             <h2 className="text-2xl font-bold text-slate-950">Login</h2>
             <p className="mt-2 text-sm text-slate-600">
               Gunakan username dan password yang terdaftar.
@@ -76,6 +80,7 @@ export default function Login() {
             <input
               className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
               name="username"
+              placeholder="Masukkan username"
               value={form.username}
               onChange={handleChange}
               required
@@ -89,6 +94,7 @@ export default function Login() {
             <input
               className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
               name="password"
+              placeholder="Masukkan password"
               type="password"
               value={form.password}
               onChange={handleChange}
@@ -97,11 +103,12 @@ export default function Login() {
           </label>
 
           <button
-            className="h-11 w-full rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Memproses..." : "Login"}
+            <MdLogin className="h-5 w-5" />
+            {isSubmitting ? "Memproses..." : "Masuk / Login"}
           </button>
 
           <p className="mt-5 text-center text-sm text-slate-600">

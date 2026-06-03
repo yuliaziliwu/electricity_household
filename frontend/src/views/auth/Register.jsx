@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { MdPersonAdd } from "react-icons/md";
 
 import useAuth from "hooks/useAuth";
 import useTarifOptions from "hooks/useTarifOptions";
@@ -52,12 +53,12 @@ export default function Register() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
-      <section className="mx-auto grid min-h-[calc(100vh-64px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1fr_460px]">
+    <main className="min-h-screen bg-slate-100 px-4 py-8 text-slate-900">
+      <section className="mx-auto grid min-h-[calc(100vh-64px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1fr_500px]">
         <div className="max-w-2xl">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-normal text-emerald-700">
+          <div className="mb-5 inline-flex items-center rounded-md bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
             Registrasi Mandiri
-          </p>
+          </div>
           <h1 className="text-4xl font-bold leading-tight text-slate-950 md:text-5xl">
             Buat profil awal untuk analisis listrik rumah.
           </h1>
@@ -69,9 +70,12 @@ export default function Register() {
 
         <form
           onSubmit={handleSubmit}
-          className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+          className="w-full rounded-lg border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/70"
         >
-          <div className="mb-6">
+          <div className="mb-6 rounded-md bg-slate-50 p-4">
+            <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-md bg-emerald-700 text-white">
+              <MdPersonAdd className="h-6 w-6" />
+            </div>
             <h2 className="text-2xl font-bold text-slate-950">Register</h2>
             <p className="mt-2 text-sm text-slate-600">
               Lengkapi data akun dan profil rumah.
@@ -105,6 +109,7 @@ export default function Register() {
               <input
                 className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 name="username"
+                placeholder="Contoh: budi123"
                 value={form.username}
                 onChange={handleChange}
                 required
@@ -118,6 +123,7 @@ export default function Register() {
               <input
                 className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 name="email"
+                placeholder="nama@email.com"
                 type="email"
                 value={form.email}
                 onChange={handleChange}
@@ -133,6 +139,7 @@ export default function Register() {
             <input
               className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
               name="password"
+              placeholder="Minimal 6 karakter"
               type="password"
               value={form.password}
               onChange={handleChange}
@@ -172,6 +179,7 @@ export default function Register() {
                 className="h-11 w-full rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 min="1"
                 name="jumlah_penghuni"
+                placeholder="Contoh: 4"
                 type="number"
                 value={form.jumlah_penghuni}
                 onChange={handleChange}
@@ -181,11 +189,12 @@ export default function Register() {
           </div>
 
           <button
-            className="mt-6 h-11 w-full rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-slate-400"
             type="submit"
             disabled={isSubmitting || isLoading}
           >
-            {isSubmitting ? "Mendaftarkan..." : "Register"}
+            <MdPersonAdd className="h-5 w-5" />
+            {isSubmitting ? "Mendaftarkan..." : "Submit / Register"}
           </button>
 
           <p className="mt-5 text-center text-sm text-slate-600">
