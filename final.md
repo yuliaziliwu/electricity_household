@@ -235,7 +235,7 @@ CREATE TABLE rekomendasi (
 
 ---
 
-## 1. Modul Autentikasi & Profil
+## 1. Modul Autentikasi & Profil ✅
 
 | No  | Fitur                  | Deskripsi                                                                 | Prioritas |
 |-----|------------------------|---------------------------------------------------------------------------|-----------|
@@ -247,7 +247,7 @@ CREATE TABLE rekomendasi (
 
 ---
 
-## 2. Modul Input Data Historis (Struk Tagihan)
+## 2. Modul Input Data Historis (Struk Tagihan) ✅
 
 | No  | Fitur                   | Deskripsi                                                                                        | Prioritas |
 |-----|-------------------------|--------------------------------------------------------------------------------------------------|-----------|
@@ -275,7 +275,7 @@ CREATE TABLE rekomendasi (
 
 ---
 
-## 4. Modul Input Alat Elektronik (Bulk Mode)
+## 4. Modul Input Alat Elektronik (Bulk Mode) âœ…
 
 | No  | Fitur                          | Deskripsi                                                                                       | Prioritas |
 |-----|--------------------------------|-------------------------------------------------------------------------------------------------|-----------|
@@ -283,23 +283,23 @@ CREATE TABLE rekomendasi (
 | 4.2 | Tambah Baris Alat              | Button "+ Tambah Alat" untuk menambah baris baru di tabel                                       | Wajib     |
 | 4.3 | Hapus Baris Alat               | Button "Hapus" per baris untuk menghapus alat dari daftar input                                 | Wajib     |
 | 4.4 | Submit Multiple Alat           | Satu kali submit untuk menyimpan semua alat elektronik ke database                              | Wajib     |
-| 4.5 | Edit Daftar Alat               | User dapat mengedit alat elektronik yang sudah tersimpan                                        | Opsional  |
-| 4.6 | Hapus Alat                     | User dapat menghapus satu alat dari daftar                                                      | Opsional  |
-| 4.7 | Lihat Daftar Alat              | Tabel menampilkan semua alat elektronik yang sudah tersimpan                                    | Opsional  |
-| 4.8 | Hitung Estimasi Konsumsi Teoritis | Sistem hitung estimasi kWh/hari dari alat: Σ(jumlah × daya × jam ÷ 1000)                    | Opsional  |
+| 4.5 | Edit Daftar Alat               | User dapat mengedit alat elektronik yang sudah tersimpan                                        | wajib  |
+| 4.6 | Hapus Alat                     | User dapat menghapus satu alat dari daftar                                                      | wajib  |
+| 4.7 | Lihat Daftar Alat              | Tabel menampilkan semua alat elektronik yang sudah tersimpan                                    | wajib  |
+| 4.8 | Hitung Estimasi Konsumsi Teoritis | Sistem hitung estimasi kWh/hari dari alat: Σ(jumlah × daya × jam ÷ 1000)                    | wajib  |
 
 ---
 
-## 5. Modul Input Pemakaian Harian (Jam Aktual per Alat)
+## 5. Modul Input Pemakaian Harian (Jam Aktual per Alat) âœ…
 
 | No  | Fitur                              | Deskripsi                                                                                                                              | Prioritas |
 |-----|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------|
 | 5.1 | Input Pemakaian Harian per Alat    | User pilih tanggal, lalu untuk setiap alat elektronik yang dimiliki, sistem menampilkan input field untuk mengisi **jam pemakaian aktual** pada hari itu. Nilai default diisi dari `jam_default_per_hari`. User cukup mengubah jika berbeda. Sistem otomatis menghitung konsumsi kWh. | Wajib     |
 | 5.2 | Input untuk Tanggal Kemarin/Hari Ini | User bisa input untuk tanggal yang sudah lewat (tidak hanya hari ini)                                                        | Wajib     |
 | 5.3 | Validasi Tanggal Unik per Alat     | Sistem tidak mengizinkan input dua kali untuk kombinasi (user, alat, tanggal) yang sama                                               | Wajib     |
-| 5.4 | Edit Pemakaian Harian              | User dapat mengubah jam_aktual pada tanggal dan alat tertentu                                                                          | Opsional  |
-| 5.5 | Hapus Pemakaian Harian             | User dapat menghapus data pemakaian pada tanggal dan alat tertentu                                                                     | Opsional  |
-| 5.6 | Lihat Riwayat Pemakaian            | Tabel menampilkan semua data pemakaian harian per alat yang sudah diinput                                                              | Opsional  |
+| 5.4 | Edit Pemakaian Harian              | User dapat mengubah jam_aktual pada tanggal dan alat tertentu                                                                          | wajib  |
+| 5.5 | Hapus Pemakaian Harian             | User dapat menghapus data pemakaian pada tanggal dan alat tertentu                                                                     | wajib  |
+| 5.6 | Lihat Riwayat Pemakaian            | Tabel menampilkan semua data pemakaian harian per alat yang sudah diinput                                                              | wajib  |
 | 5.7 | Pesan Ajakan Input Harian          | Sistem menampilkan pesan: "Lengkapi data pemakaian harian untuk mendapatkan rekomendasi pengoptimalan yang lebih akurat!"              | Wajib     |
 ---
 
@@ -359,7 +359,7 @@ CREATE TABLE rekomendasi (
 
 ---
 
-## 10. Modul Admin (Opsional)
+## 10. Modul Admin (Opsional) âœ…
 
 | No   | Fitur                  | Deskripsi                                                                        | Prioritas |
 |------|------------------------|----------------------------------------------------------------------------------|-----------|

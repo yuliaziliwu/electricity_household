@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from utils.db_conn import get_db_connection
+from utils.jwt_utils import create_token_pair, decode_token, TokenError
 import hashlib
 
 auth_bp = Blueprint('auth', __name__)
@@ -18,6 +19,25 @@ def serialize_auth_user(row):
         "daya_terpasang": row[4],
         "jumlah_penghuni": row[5]
     }
+
+
+def get_user_by_id(user_id):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT user_id, username, email, role, daya_terpasang, jumlah_penghuni
+            FROM users
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        )
+        return cursor.fetchone()
+    finally:
+        if conn:
+            conn.close()
 
 
 @auth_bp.route('/register', methods=['POST'])
@@ -116,7 +136,33 @@ def login():
         return jsonify({
             "message": "Login sukses",
             **user_payload,
-            "user": user_payload
+            "user": user_payload,
+            **create_token_pair(user_payload)
         }), 200
     else:
         return jsonify({"error": "Username atau password salah"}), 401
+
+
+@auth_bp.route('/refresh', methods=['POST'])
+def refresh():
+    data = request.get_json(silent=True) or {}
+    refresh_token = data.get('refresh_token')
+
+    if not refresh_token:
+        return jsonify({"error": "refresh_token wajib diisi"}), 400
+
+    try:
+        payload = decode_token(refresh_token, expected_type="refresh")
+    except TokenError as exc:
+        return jsonify({"error": str(exc)}), 401
+
+    user = get_user_by_id(payload.get("sub"))
+    if not user:
+        return jsonify({"error": "User tidak ditemukan"}), 401
+
+    user_payload = serialize_auth_user(user)
+    return jsonify({
+        "message": "Token berhasil diperbarui",
+        "user": user_payload,
+        **create_token_pair(user_payload)
+    }), 200

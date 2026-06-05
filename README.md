@@ -72,6 +72,34 @@ cd backend
 pip install -r requirements.txt
 python app.py
 ```
+
+## Testing API di Postman
+1. Login terlebih dahulu:
+```http
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "<password_admin>"
+}
+```
+2. Response login mengembalikan `access_token` dan `refresh_token`.
+3. Untuk memanggil API yang butuh autentikasi, tambahkan header:
+```http
+Authorization: Bearer <access_token>
+```
+4. Jika access token expired, buat token baru:
+```http
+POST http://localhost:5000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "<refresh_token>"
+}
+```
+5. Header lama `X-User-Id` masih didukung sementara untuk kompatibilitas.
+
 ## Cara Menjalankan Frontend
 ```bash
 cd frontend

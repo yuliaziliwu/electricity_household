@@ -7,3 +7,7 @@ export function registerUser(payload) {
 export function loginUser(payload) {
   return axiosClient.post("/api/auth/login", payload);
 }
+
+export function refreshToken(refresh_token) {
+  return axiosClient.post("/api/auth/refresh", { refresh_token });
+}

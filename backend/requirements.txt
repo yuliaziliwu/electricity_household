@@ -10,6 +10,7 @@ MarkupSafe==3.0.3
 numpy==2.4.6
 pandas==2.0.3
 pyodbc==5.0.1
+PyJWT==2.10.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.0
 pytz==2026.2

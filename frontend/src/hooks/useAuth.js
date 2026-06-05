@@ -27,13 +27,22 @@ export function clearUser() {
 }
 
 function getUserFromResponse(response) {
-  return response?.user || {
+  const user = response?.user || {
     user_id: response?.user_id,
     username: response?.username,
     email: response?.email,
     role: response?.role,
     daya_terpasang: response?.daya_terpasang,
     jumlah_penghuni: response?.jumlah_penghuni,
+  };
+
+  return {
+    ...user,
+    access_token: response?.access_token,
+    refresh_token: response?.refresh_token,
+    token_type: response?.token_type,
+    expires_in: response?.expires_in,
+    refresh_expires_in: response?.refresh_expires_in,
   };
 }
 

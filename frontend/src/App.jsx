@@ -8,6 +8,9 @@ import Register from "views/auth/Register";
 import Landing from "views/landing/Landing";
 import UserDashboard from "views/dashboard/UserDashboard";
 import AdminDashboard from "views/dashboard/AdminDashboard";
+import TagihanPage from "views/tagihan/TagihanPage";
+import AlatPage from "views/alat/AlatPage";
+import PemakaianPage from "views/pemakaian/PemakaianPage";
 import ProtectedRoute from "routes/ProtectedRoute";
 
 const App = () => {
@@ -22,6 +25,30 @@ const App = () => {
         element={
           <ProtectedRoute allowedRoles={["end_user"]}>
             <UserDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="tagihan"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "end_user"]}>
+            <TagihanPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="alat"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "end_user"]}>
+            <AlatPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="pemakaian"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "end_user"]}>
+            <PemakaianPage />
           </ProtectedRoute>
         }
       />
