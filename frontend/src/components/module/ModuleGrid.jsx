@@ -39,7 +39,8 @@ const moduleItems = [
   {
     title: "Modul 7",
     name: "Rekomendasi Hemat",
-    description: "Placeholder untuk rekomendasi penghematan berbasis DSS.",
+    description: "Rekomendasi penghematan berbasis aturan DSS IF-THEN.",
+    path: "/rekomendasi",
   },
   {
     title: "Modul 8",

@@ -57,6 +57,29 @@ function formatNumber(value, digits = 2) {
   }).format(Number(value || 0));
 }
 
+function validateTarifForm(form) {
+  const dayaVa = Number(form.daya_va);
+  const tarifPerKwh = Number(form.tarif_per_kwh);
+
+  if (!Number.isFinite(dayaVa) || dayaVa <= 0) {
+    return "Daya VA harus lebih dari 0.";
+  }
+
+  if (!Number.isFinite(tarifPerKwh) || tarifPerKwh <= 0) {
+    return "Tarif per kWh harus lebih dari 0.";
+  }
+
+  if (!form.berlaku_dari) {
+    return "Tanggal berlaku dari wajib diisi.";
+  }
+
+  if (form.berlaku_sampai && form.berlaku_sampai < form.berlaku_dari) {
+    return "Tanggal berlaku sampai tidak boleh sebelum berlaku dari.";
+  }
+
+  return "";
+}
+
 function SectionHeader({ title, subtitle, action }) {
   return (
     <div className="mb-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
@@ -86,6 +109,8 @@ export default function AdminDashboard() {
   const [error, setError] = useState("");
 
   const summary = statistics?.summary || {};
+  const totalTagihan = Number(summary.total_tagihan || 0);
+  const canRetrainModel = totalTagihan >= 3;
 
   const monthlyChart = useMemo(() => {
     const rows = statistics?.monthly_consumption || [];
@@ -209,9 +234,16 @@ export default function AdminDashboard() {
 
   async function handleTarifSubmit(event) {
     event.preventDefault();
-    setIsSubmitting(true);
     setMessage("");
     setError("");
+
+    const validationError = validateTarifForm(tarifForm);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const payload = {
       daya_va: Number(tarifForm.daya_va),
@@ -219,6 +251,10 @@ export default function AdminDashboard() {
       berlaku_dari: tarifForm.berlaku_dari,
       berlaku_sampai: tarifForm.berlaku_sampai || null,
     };
+
+    if (process.env.NODE_ENV === "development") {
+      console.info("Submitting admin tarif payload", payload);
+    }
 
     try {
       if (editingTarifId) {
@@ -231,7 +267,7 @@ export default function AdminDashboard() {
       resetTarifForm();
       await loadAdminData();
     } catch (err) {
-      setError(err.message);
+      setError(err.status ? `${err.message} (HTTP ${err.status})` : err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -306,15 +342,24 @@ export default function AdminDashboard() {
   }
 
   async function handleRetrain() {
-    setIsSubmitting(true);
     setMessage("");
     setError("");
+
+    if (!canRetrainModel) {
+      setError(
+        `Minimal 3 data tagihan diperlukan untuk retrain model. Data saat ini: ${totalTagihan}.`
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await retrainAdminModel(user.user_id);
       setMessage(
         `${response.message}. Data training: ${response.training_rows}, model: ${response.model_path}`
       );
+      await loadAdminData();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -723,7 +768,7 @@ export default function AdminDashboard() {
             action={
               <button
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#933f0e] px-4 text-sm font-semibold text-white transition hover:bg-[#7c2d12] disabled:bg-[#7a8b84]"
-                disabled={isSubmitting || isLoading}
+                disabled={isSubmitting || isLoading || !canRetrainModel}
                 onClick={handleRetrain}
                 type="button"
               >
@@ -732,11 +777,22 @@ export default function AdminDashboard() {
               </button>
             }
           />
+          <div
+            className={`mb-4 rounded-md border px-4 py-3 text-sm ${
+              canRetrainModel
+                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                : "border-amber-200 bg-amber-50 text-amber-900"
+            }`}
+          >
+            {canRetrainModel
+              ? `Data tagihan tersedia ${totalTagihan}. Model siap di-retrain.`
+              : `Minimal 3 data tagihan diperlukan untuk retrain model. Data saat ini: ${totalTagihan}.`}
+          </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-lg border border-[#d8e1dc] bg-white p-4">
               <p className="text-sm text-[#5a6a64]">Data Tagihan</p>
               <p className="mt-2 text-2xl font-bold">
-                {summary.total_tagihan || 0}
+                {totalTagihan}
               </p>
             </div>
             <div className="rounded-lg border border-[#d8e1dc] bg-white p-4">

@@ -9,16 +9,16 @@ function authHeaders(userId) {
 }
 
 export function getPemakaian(userId) {
-  return axiosClient.get("/api/pemakaian", authHeaders(userId));
+  return axiosClient.get("/pemakaian", authHeaders(userId));
 }
 
 export function createPemakaianBulk(userId, payload) {
-  return axiosClient.post("/api/pemakaian/bulk", payload, authHeaders(userId));
+  return axiosClient.post("/pemakaian/bulk", payload, authHeaders(userId));
 }
 
 export function updatePemakaian(userId, pemakaianId, payload) {
   return axiosClient.put(
-    `/api/pemakaian/${pemakaianId}`,
+    `/pemakaian/${pemakaianId}`,
     payload,
     authHeaders(userId)
   );
@@ -26,7 +26,7 @@ export function updatePemakaian(userId, pemakaianId, payload) {
 
 export function deletePemakaian(userId, pemakaianId) {
   return axiosClient.delete(
-    `/api/pemakaian/${pemakaianId}`,
+    `/pemakaian/${pemakaianId}`,
     authHeaders(userId)
   );
 }

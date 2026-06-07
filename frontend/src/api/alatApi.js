@@ -9,17 +9,17 @@ function authHeaders(userId) {
 }
 
 export function getAlat(userId) {
-  return axiosClient.get("/api/alat", authHeaders(userId));
+  return axiosClient.get("/alat", authHeaders(userId));
 }
 
 export function createAlatBulk(userId, alat) {
-  return axiosClient.post("/api/alat/bulk", { alat }, authHeaders(userId));
+  return axiosClient.post("/alat/bulk", { alat }, authHeaders(userId));
 }
 
 export function updateAlat(userId, alatId, payload) {
-  return axiosClient.put(`/api/alat/${alatId}`, payload, authHeaders(userId));
+  return axiosClient.put(`/alat/${alatId}`, payload, authHeaders(userId));
 }
 
 export function deleteAlat(userId, alatId) {
-  return axiosClient.delete(`/api/alat/${alatId}`, authHeaders(userId));
+  return axiosClient.delete(`/alat/${alatId}`, authHeaders(userId));
 }

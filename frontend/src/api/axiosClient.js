@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
 
 const AUTH_STORAGE_KEY = "electricity_household_user";
 
@@ -23,22 +23,68 @@ function getAuthHeaders() {
   return {};
 }
 
+function parseRequestBody(body) {
+  if (!body) {
+    return null;
+  }
+
+  if (typeof body !== "string") {
+    return body;
+  }
+
+  try {
+    return JSON.parse(body);
+  } catch {
+    return body;
+  }
+}
+
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const url = `${API_BASE_URL}${path}`;
+  const { headers: optionHeaders = {}, ...fetchOptions } = options;
+  const method = fetchOptions.method || "GET";
+  const requestBody = parseRequestBody(fetchOptions.body);
+
+  const response = await fetch(url, {
+    ...fetchOptions,
     headers: {
       "Content-Type": "application/json",
       ...getAuthHeaders(),
-      ...(options.headers || {}),
+      ...optionHeaders,
     },
-    ...options,
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  let data = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { raw: text };
+    }
+  }
 
   if (!response.ok) {
-    const message = data?.error || "Request gagal";
-    throw new Error(message);
+    const message =
+      data?.error || data?.message || response.statusText || "Request gagal";
+    const error = new Error(message);
+    error.status = response.status;
+    error.url = url;
+    error.method = method;
+    error.requestBody = requestBody;
+    error.responseData = data;
+
+    if (process.env.NODE_ENV === "development") {
+      console.error("API request failed", {
+        status: response.status,
+        url,
+        method,
+        requestBody,
+        responseData: data,
+      });
+    }
+
+    throw error;
   }
 
   return data;
