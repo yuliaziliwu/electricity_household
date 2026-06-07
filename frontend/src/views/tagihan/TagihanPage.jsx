@@ -37,7 +37,6 @@ function createEmptyRow() {
   return {
     bulan: "",
     tahun: currentYear,
-    konsumsi_kWh: "",
     biaya: "",
   };
 }
@@ -70,8 +69,8 @@ function validateRows(rows) {
       return "Bulan dan tahun wajib diisi di setiap baris.";
     }
 
-    if (!row.konsumsi_kWh && !row.biaya) {
-      return "Setiap baris harus memiliki konsumsi kWh atau biaya.";
+    if (!row.biaya || Number(row.biaya) <= 0) {
+      return "Nominal tagihan wajib diisi dan harus lebih dari 0.";
     }
 
     const key = `${row.bulan}-${row.tahun}`;
@@ -104,9 +103,8 @@ export default function TagihanPage() {
     return history.reduce(
       (total, item) => ({
         biaya: total.biaya + Number(item.biaya || 0),
-        konsumsi: total.konsumsi + Number(item.konsumsi_kWh || 0),
       }),
-      { biaya: 0, konsumsi: 0 }
+      { biaya: 0 }
     );
   }, [history]);
 
@@ -175,7 +173,7 @@ export default function TagihanPage() {
       const payload = rows.map((row) => ({
         bulan: Number(row.bulan),
         tahun: Number(row.tahun),
-        konsumsi_kWh: row.konsumsi_kWh ? Number(row.konsumsi_kWh) : null,
+        konsumsi_kWh: null,
         biaya: row.biaya ? Number(row.biaya) : null,
       }));
 
@@ -195,7 +193,6 @@ export default function TagihanPage() {
       tagihan_id: item.tagihan_id,
       bulan: item.bulan,
       tahun: item.tahun,
-      konsumsi_kWh: item.konsumsi_kWh,
       biaya: item.biaya ?? "",
     });
     setMessage("");
@@ -213,13 +210,17 @@ export default function TagihanPage() {
     setMessage("");
     setError("");
 
+    if (!editForm.biaya || Number(editForm.biaya) <= 0) {
+      setError("Nominal tagihan wajib diisi dan harus lebih dari 0.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       await updateTagihan(user.user_id, editForm.tagihan_id, {
         bulan: Number(editForm.bulan),
         tahun: Number(editForm.tahun),
-        konsumsi_kWh: editForm.konsumsi_kWh
-          ? Number(editForm.konsumsi_kWh)
-          : null,
+        konsumsi_kWh: null,
         biaya: editForm.biaya ? Number(editForm.biaya) : null,
       });
       setEditForm(null);
@@ -265,9 +266,9 @@ export default function TagihanPage() {
             Input Data Historis Tagihan
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
-            Masukkan 3 sampai 6 bulan tagihan. Jika hanya biaya yang diisi,
-            backend akan mengonversi biaya menjadi kWh memakai tarif aktif
-            sesuai daya terpasang user.
+            Masukkan nominal tagihan listrik sesuai struk untuk 3 sampai 6
+            bulan terakhir. Data ini menjadi dasar prediksi biaya bulan
+            berikutnya.
           </p>
         </div>
 
@@ -277,15 +278,17 @@ export default function TagihanPage() {
             <p className="mt-2 text-2xl font-bold">{history.length}</p>
           </div>
           <div className="rounded-lg border border-[#d8e1dc] bg-[#fffdf7] p-5 shadow-sm">
-            <p className="text-sm text-[#5a6a64]">Total kWh Tersimpan</p>
-            <p className="mt-2 text-2xl font-bold">
-              {summary.konsumsi.toFixed(2)} kWh
-            </p>
-          </div>
-          <div className="rounded-lg border border-[#d8e1dc] bg-[#fffdf7] p-5 shadow-sm">
             <p className="text-sm text-[#5a6a64]">Total Biaya Tersimpan</p>
             <p className="mt-2 text-2xl font-bold">
               {formatCurrency(summary.biaya)}
+            </p>
+          </div>
+          <div className="rounded-lg border border-[#d8e1dc] bg-[#fffdf7] p-5 shadow-sm">
+            <p className="text-sm text-[#5a6a64]">Rata-rata Tagihan</p>
+            <p className="mt-2 text-2xl font-bold">
+              {formatCurrency(
+                history.length ? summary.biaya / history.length : 0
+              )}
             </p>
           </div>
         </div>
@@ -310,7 +313,7 @@ export default function TagihanPage() {
             <div>
               <h2 className="text-2xl font-bold">Input Tagihan Baru</h2>
               <p className="mt-1 text-sm text-[#4a5a55]">
-                Tambah baris dinamis minimal 3 dan maksimal 6 bulan.
+                Isi bulan, tahun, dan nominal biaya tagihan sesuai struk.
               </p>
             </div>
             <button
@@ -327,7 +330,7 @@ export default function TagihanPage() {
           <div className="space-y-4">
             {rows.map((row, index) => (
               <div
-                className="grid gap-3 rounded-lg border border-[#d8e1dc] bg-white p-4 md:grid-cols-[1.1fr_0.8fr_1fr_1fr_auto]"
+                className="grid gap-3 rounded-lg border border-[#d8e1dc] bg-white p-4 md:grid-cols-[1.1fr_0.8fr_1fr_auto]"
                 key={index}
               >
                 <label className="block">
@@ -369,24 +372,7 @@ export default function TagihanPage() {
 
                 <label className="block">
                   <span className="mb-2 block text-sm font-semibold">
-                    Konsumsi kWh
-                  </span>
-                  <input
-                    className="h-11 w-full rounded-md border border-[#b9c8c1] bg-white px-3 text-sm outline-none placeholder:text-[#7a8b84] focus:border-[#176b52] focus:ring-2 focus:ring-emerald-100"
-                    min="0"
-                    onChange={(event) =>
-                      updateRow(index, "konsumsi_kWh", event.target.value)
-                    }
-                    placeholder="Contoh: 120.5"
-                    step="0.01"
-                    type="number"
-                    value={row.konsumsi_kWh}
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-2 block text-sm font-semibold">
-                    Biaya Rp
+                    Nominal Tagihan Rp
                   </span>
                   <input
                     className="h-11 w-full rounded-md border border-[#b9c8c1] bg-white px-3 text-sm outline-none placeholder:text-[#7a8b84] focus:border-[#176b52] focus:ring-2 focus:ring-emerald-100"
@@ -397,6 +383,7 @@ export default function TagihanPage() {
                     placeholder="Contoh: 175000"
                     step="0.01"
                     type="number"
+                    required
                     value={row.biaya}
                   />
                 </label>
@@ -434,7 +421,7 @@ export default function TagihanPage() {
               <div>
                 <h2 className="text-xl font-bold">Edit Tagihan</h2>
                 <p className="mt-1 text-sm text-amber-900">
-                  Ubah data bulan dan nilai tagihan yang dipilih.
+                  Ubah bulan, tahun, dan nominal tagihan yang dipilih.
                 </p>
               </div>
               <button
@@ -446,7 +433,7 @@ export default function TagihanPage() {
               </button>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-3">
               <select
                 className="h-11 rounded-md border border-amber-300 bg-white px-3 text-sm"
                 onChange={(event) =>
@@ -481,26 +468,13 @@ export default function TagihanPage() {
                 onChange={(event) =>
                   setEditForm((current) => ({
                     ...current,
-                    konsumsi_kWh: event.target.value,
-                  }))
-                }
-                placeholder="Konsumsi kWh"
-                step="0.01"
-                type="number"
-                value={editForm.konsumsi_kWh}
-              />
-              <input
-                className="h-11 rounded-md border border-amber-300 bg-white px-3 text-sm"
-                min="0"
-                onChange={(event) =>
-                  setEditForm((current) => ({
-                    ...current,
                     biaya: event.target.value,
                   }))
                 }
                 placeholder="Biaya"
                 step="0.01"
                 type="number"
+                required
                 value={editForm.biaya}
               />
             </div>
@@ -547,7 +521,7 @@ export default function TagihanPage() {
                   <tr className="border-b border-[#d8e1dc] bg-[#e5f2ec] text-[#243b34]">
                     <th className="px-4 py-3 font-semibold">Bulan</th>
                     <th className="px-4 py-3 font-semibold">Tahun</th>
-                    <th className="px-4 py-3 font-semibold">Konsumsi kWh</th>
+                    <th className="px-4 py-3 font-semibold">Estimasi kWh</th>
                     <th className="px-4 py-3 font-semibold">Biaya</th>
                     <th className="px-4 py-3 font-semibold">Aksi</th>
                   </tr>
@@ -561,7 +535,10 @@ export default function TagihanPage() {
                       <td className="px-4 py-3">{getMonthLabel(item.bulan)}</td>
                       <td className="px-4 py-3">{item.tahun}</td>
                       <td className="px-4 py-3">
-                        {Number(item.konsumsi_kWh).toFixed(2)}
+                        {item.konsumsi_kWh === null ||
+                        item.konsumsi_kWh === undefined
+                          ? "-"
+                          : `${Number(item.konsumsi_kWh).toFixed(2)} kWh`}
                       </td>
                       <td className="px-4 py-3">{formatCurrency(item.biaya)}</td>
                       <td className="px-4 py-3">

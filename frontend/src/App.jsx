@@ -11,6 +11,7 @@ import AdminDashboard from "views/dashboard/AdminDashboard";
 import TagihanPage from "views/tagihan/TagihanPage";
 import AlatPage from "views/alat/AlatPage";
 import PemakaianPage from "views/pemakaian/PemakaianPage";
+import PrediksiPage from "views/prediksi/PrediksiPage";
 import RekomendasiPage from "views/rekomendasi/RekomendasiPage";
 import ProtectedRoute from "routes/ProtectedRoute";
 
@@ -50,6 +51,14 @@ const App = () => {
         element={
           <ProtectedRoute allowedRoles={["admin", "end_user"]}>
             <PemakaianPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="prediksi"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "end_user"]}>
+            <PrediksiPage />
           </ProtectedRoute>
         }
       />

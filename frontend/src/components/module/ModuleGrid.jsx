@@ -17,7 +17,8 @@ const moduleItems = [
   {
     title: "Modul 3",
     name: "Prediksi Biaya",
-    description: "Placeholder untuk prediksi konsumsi dan biaya listrik.",
+    description: "Prediksi tagihan bulan depan dengan model AI enhanced.",
+    path: "/prediksi",
   },
   {
     title: "Modul 4",

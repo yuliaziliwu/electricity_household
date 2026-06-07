@@ -5,6 +5,7 @@ from routes.admin import admin_bp
 from routes.alat import alat_bp
 from routes.auth import auth_bp
 from routes.pemakaian import pemakaian_bp
+from routes.prediksi import prediksi_bp
 from routes.rekomendasi import rekomendasi_bp
 from routes.tagihan import tagihan_bp
 
@@ -32,6 +33,7 @@ def register_blueprints(app):
     app.register_blueprint(tagihan_bp, url_prefix='/api/tagihan')
     app.register_blueprint(alat_bp, url_prefix='/api/alat')
     app.register_blueprint(pemakaian_bp, url_prefix='/api/pemakaian')
+    app.register_blueprint(prediksi_bp, url_prefix='/api/prediksi')
     app.register_blueprint(rekomendasi_bp, url_prefix='/api/rekomendasi')
 
 
