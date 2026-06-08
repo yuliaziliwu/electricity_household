@@ -12,14 +12,14 @@ Legenda:
 |-------|------------|--------|
 | 1 | Autentikasi & Profil | Parsial, fitur wajib selesai |
 | 2 | Input Data Historis Tagihan | Selesai |
-| 3 | Prediksi Biaya Listrik | Belum |
+| 3 | Prediksi Biaya Listrik | Selesai |
 | 4 | Input Alat Elektronik | Selesai |
 | 5 | Input Pemakaian Harian | Selesai |
-| 6 | Dashboard & Visualisasi End User | Belum |
+| 6 | Dashboard & Visualisasi End User | Selesai, kecuali gauge opsional |
 | 7 | Rekomendasi Penghematan DSS | Selesai, kecuali benchmarking opsional |
 | 8 | Aturan Decision Support System | Parsial, master aturan admin tersedia |
-| 9 | Laporan & Export | Belum |
-| 10 | Admin | Selesai |
+| 9 | Laporan & Export | Parsial |
+| 10 | Admin | Parsial, retrain model dinonaktifkan sementara |
 
 ## 1. Modul Autentikasi & Profil
 
@@ -50,14 +50,14 @@ Catatan: login sudah mengembalikan token bearer dan refresh token. Edit profil b
 
 | No | Fitur | Status |
 |----|-------|--------|
-| 3.1 | Prediksi Awal setelah input 3-6 tagihan | [ ] |
-| 3.2 | Tampilkan Hasil Prediksi | [ ] |
-| 3.3 | Prediksi Ulang Hybrid | [ ] |
-| 3.4 | Indikator metode Prediksi | [ ] |
-| 3.5 | Riwayat Prediksi | [ ] |
-| 3.6 | Simpan Hasil Prediksi | [ ] |
+| 3.1 | Prediksi Awal setelah input 3-6 tagihan | [x] |
+| 3.2 | Tampilkan Hasil Prediksi | [x] |
+| 3.3 | Prediksi Ulang Hybrid | [x] |
+| 3.4 | Indikator metode Prediksi | [x] |
+| 3.5 | Riwayat Prediksi | [x] |
+| 3.6 | Simpan Hasil Prediksi | [x] |
 
-Catatan: file `backend/routes/prediksi.py` masih kosong dan belum didaftarkan di `backend/app.py`. Belum ada API atau UI prediksi end user.
+Catatan: prediksi tersedia melalui `POST /api/prediksi`, `GET /api/prediksi/latest`, dan `GET /api/prediksi/history`. Backend memakai artifact Random Forest `backend/electricity_bill_model_rf.pkl`, menyimpan hasil ke tabel `prediksi`, dan frontend sudah memiliki halaman `/prediksi`.
 
 ## 4. Modul Input Alat Elektronik (Bulk Mode)
 
@@ -88,14 +88,14 @@ Catatan: file `backend/routes/prediksi.py` masih kosong dan belum didaftarkan di
 
 | No | Fitur | Status |
 |----|-------|--------|
-| 6.1 | Line Chart Konsumsi Harian | [ ] |
-| 6.2 | Bar Chart Perbandingan Hari | [ ] |
-| 6.3 | Kartu Info Ringkasan | [ ] |
-| 6.4 | Tampilkan Prediksi Terbaru | [ ] |
+| 6.1 | Line Chart Konsumsi Harian | [x] |
+| 6.2 | Bar Chart Perbandingan Hari | [x] |
+| 6.3 | Kartu Info Ringkasan | [x] |
+| 6.4 | Tampilkan Prediksi Terbaru | [x] |
 | 6.5 | Gauge Sisa Kuota Daya | [ ] |
-| 6.6 | Tooltip Interaktif | [ ] |
+| 6.6 | Tooltip Interaktif | [x] |
 
-Catatan: `UserDashboard` masih berupa profil singkat dan navigasi modul. Grafik yang ada saat ini berada di dashboard admin, bukan dashboard end user sesuai modul 6.
+Catatan: `UserDashboard` sudah menampilkan kartu ringkasan, histori tagihan, line chart konsumsi harian, bar chart rata-rata per hari, prediksi terbaru, tooltip chart, aksi cepat, dan cetak dashboard. Gauge sisa kuota daya belum tersedia.
 
 ## 7. Modul Rekomendasi Penghematan (DSS)
 
@@ -135,8 +135,8 @@ Catatan: aturan R1-R10 tersedia sebagai master aturan admin. Evaluasi DSS untuk 
 | No | Fitur | Status |
 |----|-------|--------|
 | 9.1 | Export Data Konsumsi ke CSV | [ ] |
-| 9.2 | Export Laporan Bulanan PDF | [ ] |
-| 9.3 | Print Dashboard | [ ] |
+| 9.2 | Export Laporan Bulanan PDF | [x] |
+| 9.3 | Print Dashboard | [x] |
 
 ## 10. Modul Admin
 
@@ -147,12 +147,13 @@ Catatan: aturan R1-R10 tersedia sebagai master aturan admin. Evaluasi DSS untuk 
 | 10.3 | Lihat Semua User | [x] |
 | 10.4 | Lihat Statistik Global | [x] |
 | 10.5 | Kelola Aturan DSS | [x] |
-| 10.6 | Retrain Model RF | [x] |
+| 10.6 | Retrain Model RF | [ ] |
+
+Catatan: route retrain lama masih ada, tetapi tombol admin dinonaktifkan sementara karena pipeline lama menghasilkan model dengan fitur berbeda dari artifact Random Forest 22 fitur yang dipakai prediksi runtime.
 
 ## Modul yang Belum Diimplementasikan
 
-- Modul 3 Prediksi Biaya Listrik.
-- Modul 6 Dashboard & Visualisasi End User.
 - Fitur 7.5 Rekomendasi Berdasarkan Benchmarking.
-- Modul 9 Laporan & Export.
+- Fitur 9.1 Export Data Konsumsi ke CSV.
+- Fitur 10.6 Retrain Model RF dengan pipeline 22 fitur terbaru.
 - Fitur 1.5 Edit Profil.

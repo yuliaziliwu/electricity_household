@@ -7,19 +7,20 @@ const moduleItems = [
     name: "Autentikasi & Profil",
     description: "Login, register, role user, dan profil rumah tangga.",
     path: "/dashboard",
+    adminPath: "/admin/dashboard",
     allowedRoles: ["admin", "end_user"],
   },
   {
     title: "Modul 2",
     name: "Input Tagihan",
-    description: "Placeholder untuk data historis struk tagihan listrik.",
+    description: "Input, edit, hapus, dan lihat riwayat struk tagihan listrik.",
     path: "/tagihan",
     allowedRoles: ["admin", "end_user"],
   },
   {
     title: "Modul 3",
     name: "Prediksi Biaya",
-    description: "Prediksi tagihan bulan depan dengan model AI enhanced.",
+    description: "Prediksi tagihan bulan depan dengan model Random Forest.",
     path: "/prediksi",
     allowedRoles: ["admin", "end_user"],
   },
@@ -40,7 +41,9 @@ const moduleItems = [
   {
     title: "Modul 6",
     name: "Dashboard & Visualisasi",
-    description: "Placeholder untuk grafik, ringkasan, dan indikator energi.",
+    description: "Grafik, ringkasan, prediksi terbaru, dan cetak dashboard.",
+    path: "/dashboard",
+    adminPath: "/admin/dashboard",
     allowedRoles: ["admin", "end_user"],
   },
   {
@@ -53,13 +56,14 @@ const moduleItems = [
   {
     title: "Modul 8",
     name: "Aturan DSS",
-    description: "Placeholder untuk aturan keputusan dan saran hemat energi.",
+    description: "Kelola master aturan keputusan dan saran hemat energi.",
+    path: "/admin/dashboard",
     allowedRoles: ["admin"],
   },
   {
     title: "Modul 9",
     name: "Laporan & Export",
-    description: "Placeholder untuk export data, laporan, dan cetak dashboard.",
+    description: "Export PDF dan cetak dashboard tersedia; export CSV belum aktif.",
     allowedRoles: ["admin", "end_user"],
   },
   {
@@ -80,9 +84,11 @@ export default function ModuleGrid({ role }) {
     const className =
       "mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[#183b34] bg-[#183b34] px-4 text-sm font-semibold text-white transition hover:bg-emerald-800";
 
-    if (item.path) {
+    const targetPath = role === "admin" && item.adminPath ? item.adminPath : item.path;
+
+    if (targetPath) {
       return (
-        <Link className={className} to={item.path}>
+        <Link className={className} to={targetPath}>
           Buka Modul
           <MdArrowForward className="h-4 w-4" />
         </Link>

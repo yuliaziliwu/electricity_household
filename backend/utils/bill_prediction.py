@@ -9,16 +9,29 @@ import numpy as np
 import pandas as pd
 
 
-MODEL_PATH = Path(__file__).resolve().parents[1] / "electricity_bill_model_enhanced.pkl"
+MODEL_PATH = Path(__file__).resolve().parents[1] / "electricity_bill_model_rf.pkl"
 DEFAULT_DURATION_HOURS = 6.0
 MIN_DAILY_ROWS_FOR_HYBRID = 7
+RF_STD_TREE_LIMIT = 50
+RF_STD_FACTOR = 0.65
+MAX_MARGIN_PERCENT = 6
+MIN_MARGIN_PERCENT = 1
 
 
 @lru_cache(maxsize=1)
 def load_prediction_artifact():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        return joblib.load(MODEL_PATH)
+        artifact = joblib.load(MODEL_PATH)
+
+    metadata = artifact.get("metadata") or {}
+    model = artifact.get("model")
+    if metadata.get("model_type") != "random_forest":
+        raise ValueError("Artifact prediksi harus bertipe random_forest")
+    if not hasattr(model, "predict"):
+        raise ValueError("Model prediksi tidak memiliki method predict")
+
+    return artifact
 
 
 def calculate_estimated_kwh(power_watt, duration_hours, days):
@@ -279,12 +292,28 @@ def predict_bill_from_features(features):
     prediction = float(model.predict(scaled_input)[0])
     prediction = max(prediction, 0)
 
+    if hasattr(model, "estimators_"):
+        tree_predictions = np.column_stack(
+            [tree.predict(scaled_input) for tree in model.estimators_[:RF_STD_TREE_LIMIT]]
+        )
+        prediction_std = float(np.std(tree_predictions, axis=1)[0])
+    else:
+        prediction_std = prediction * 0.02
+
+    margin = prediction_std * RF_STD_FACTOR
+    max_margin = prediction * (MAX_MARGIN_PERCENT / 100)
+    final_margin = min(margin, max_margin)
+    final_margin_percent = (final_margin / prediction * 100) if prediction else 0
+
+    if prediction and final_margin_percent < MIN_MARGIN_PERCENT:
+        final_margin = prediction * (MIN_MARGIN_PERCENT / 100)
+
     metadata = artifact.get("metadata") or {}
     return {
         "predicted_next_month_bill": round(prediction, 2),
-        "confidence_lower": round(max(prediction * 0.85, 0), 2),
-        "confidence_upper": round(prediction * 1.15, 2),
-        "model_version": str(metadata.get("version") or "enhanced"),
+        "confidence_lower": round(max(prediction - final_margin, 0), 2),
+        "confidence_upper": round(prediction + final_margin, 2),
+        "model_version": str(metadata.get("version") or "2.0-random-forest"),
         "model_metrics": metadata.get("metrics") or {},
     }
 

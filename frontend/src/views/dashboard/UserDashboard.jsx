@@ -7,12 +7,14 @@ import {
   MdDevices,
   MdLightbulb,
   MdLogout,
+  MdPictureAsPdf,
   MdPrint,
   MdReceipt,
   MdRefresh,
 } from "react-icons/md";
 
 import { getAlat } from "api/alatApi";
+import { downloadBulananPrediksiPdf } from "api/laporanApi";
 import { getPemakaian } from "api/pemakaianApi";
 import { getLatestPrediksi } from "api/prediksiApi";
 import { getTagihan } from "api/tagihanApi";
@@ -112,6 +114,8 @@ export default function UserDashboard() {
   const [alatSummary, setAlatSummary] = useState(null);
   const [latestPrediksi, setLatestPrediksi] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   const loadDashboard = useCallback(async () => {
@@ -284,6 +288,25 @@ export default function UserDashboard() {
     window.print();
   }
 
+  async function handleExportPdf() {
+    if (!user?.user_id) {
+      return;
+    }
+
+    setIsExportingPdf(true);
+    setMessage("");
+    setError("");
+
+    try {
+      await downloadBulananPrediksiPdf(user.user_id);
+      setMessage("Laporan PDF berhasil diunduh.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  }
+
   const needsTagihan = summary.totalTagihan < 3;
 
   return (
@@ -303,6 +326,15 @@ export default function UserDashboard() {
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row no-print">
+            <button
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-white/30 px-4 text-sm font-semibold text-white transition hover:border-emerald-200 hover:bg-white/10 disabled:cursor-not-allowed disabled:border-white/20 disabled:text-white/70"
+              disabled={isExportingPdf}
+              onClick={handleExportPdf}
+              type="button"
+            >
+              <MdPictureAsPdf className="h-5 w-5" />
+              {isExportingPdf ? "Mengunduh..." : "Export PDF"}
+            </button>
             <button
               className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-white/30 px-4 text-sm font-semibold text-white transition hover:border-emerald-200 hover:bg-white/10"
               onClick={handlePrint}
@@ -353,6 +385,12 @@ export default function UserDashboard() {
         {error ? (
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
+          </div>
+        ) : null}
+
+        {message ? (
+          <div className="mb-4 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {message}
           </div>
         ) : null}
 
@@ -445,7 +483,7 @@ export default function UserDashboard() {
           <div className="rounded-lg border border-[#cfded6] bg-[#fffdf7] p-5 shadow-sm">
             <SectionHeader
               title="Prediksi Bulan Depan"
-              subtitle="Hasil prediksi terbaru dari model AI."
+              subtitle="Hasil prediksi terbaru dari model Random Forest."
             />
             {latestPrediksi ? (
               <div className="space-y-4">

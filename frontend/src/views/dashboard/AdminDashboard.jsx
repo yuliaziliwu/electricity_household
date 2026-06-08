@@ -19,7 +19,6 @@ import {
   getAdminStatistics,
   getAdminTarif,
   getAdminUsers,
-  retrainAdminModel,
   updateAdminDssRule,
   updateAdminTarif,
   updateAdminUserRole,
@@ -110,8 +109,6 @@ export default function AdminDashboard() {
 
   const summary = statistics?.summary || {};
   const totalTagihan = Number(summary.total_tagihan || 0);
-  const canRetrainModel = totalTagihan >= 3;
-
   const monthlyChart = useMemo(() => {
     const rows = statistics?.monthly_consumption || [];
     return {
@@ -343,28 +340,9 @@ export default function AdminDashboard() {
 
   async function handleRetrain() {
     setMessage("");
-    setError("");
-
-    if (!canRetrainModel) {
-      setError(
-        `Minimal 3 data tagihan diperlukan untuk retrain model. Data saat ini: ${totalTagihan}.`
-      );
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const response = await retrainAdminModel(user.user_id);
-      setMessage(
-        `${response.message}. Data training: ${response.training_rows}, model: ${response.model_path}`
-      );
-      await loadAdminData();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    setError(
+      "Retraining admin belum tersedia untuk pipeline Random Forest 22 fitur terbaru."
+    );
   }
 
   return (
@@ -761,29 +739,25 @@ export default function AdminDashboard() {
         <section className="rounded-lg border border-[#cfded6] bg-[#fffdf7] p-5 shadow-sm">
           <SectionHeader
             title="Retrain Model Random Forest"
-            subtitle="Admin dapat memicu ulang pelatihan model dengan seluruh data tagihan terbaru."
+            subtitle="Retraining admin dinonaktifkan sementara sampai pipeline model 22 fitur terbaru tersedia."
             action={
               <button
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#933f0e] px-4 text-sm font-semibold text-white transition hover:bg-[#7c2d12] disabled:bg-[#7a8b84]"
-                disabled={isSubmitting || isLoading || !canRetrainModel}
+                className="inline-flex h-11 cursor-not-allowed items-center justify-center gap-2 rounded-md bg-[#7a8b84] px-4 text-sm font-semibold text-white"
+                disabled
                 onClick={handleRetrain}
                 type="button"
               >
                 <MdAutoFixHigh className="h-5 w-5" />
-                Retrain Model
+                Retrain Dinonaktifkan
               </button>
             }
           />
           <div
-            className={`mb-4 rounded-md border px-4 py-3 text-sm ${
-              canRetrainModel
-                ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                : "border-amber-200 bg-amber-50 text-amber-900"
-            }`}
+            className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
           >
-            {canRetrainModel
-              ? `Data tagihan tersedia ${totalTagihan}. Model siap di-retrain.`
-              : `Minimal 3 data tagihan diperlukan untuk retrain model. Data saat ini: ${totalTagihan}.`}
+            Model prediksi aktif menggunakan artifact 22 fitur
+            electricity_bill_model_rf.pkl. Pipeline retrain admin lama tidak
+            dipakai agar tidak membuat model dengan fitur yang berbeda.
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-lg border border-[#d8e1dc] bg-white p-4">

@@ -4,9 +4,11 @@ import {
   MdArrowBack,
   MdBolt,
   MdHistory,
+  MdPictureAsPdf,
   MdRefresh,
 } from "react-icons/md";
 
+import { downloadPrediksiPdf } from "api/laporanApi";
 import {
   createPrediksi,
   getLatestPrediksi,
@@ -77,6 +79,7 @@ export default function PrediksiPage() {
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -133,6 +136,25 @@ export default function PrediksiPage() {
     }
   }
 
+  async function handleExportPrediksiPdf() {
+    if (!user?.user_id) {
+      return;
+    }
+
+    setIsExportingPdf(true);
+    setMessage("");
+    setError("");
+
+    try {
+      await downloadPrediksiPdf(user.user_id);
+      setMessage("Laporan prediksi PDF berhasil diunduh.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsExportingPdf(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#edf4ef] px-4 py-6 text-[#13201d] md:py-8">
       <section className="mx-auto max-w-7xl">
@@ -153,8 +175,9 @@ export default function PrediksiPage() {
               Prediksi Biaya Listrik
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-emerald-50">
-              Model AI membaca histori nominal tagihan, pola perangkat, dan
-              pemakaian harian untuk memperkirakan biaya bulan berikutnya.
+              Model Random Forest membaca histori nominal tagihan, pola
+              perangkat, dan pemakaian harian untuk memperkirakan biaya bulan
+              berikutnya.
             </p>
           </div>
           <button
@@ -206,19 +229,30 @@ export default function PrediksiPage() {
             <div>
               <h2 className="text-2xl font-bold">Hasil Prediksi Terbaru</h2>
               <p className="mt-1 text-sm text-[#4a5a55]">
-                Minimal 3 data tagihan diperlukan sebelum model dapat membuat
-                prediksi.
+                Minimal 3 data tagihan diperlukan sebelum model Random Forest
+                dapat membuat prediksi.
               </p>
             </div>
-            <button
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[#b9c8c1] px-4 text-sm font-semibold text-[#243b34] transition hover:border-[#176b52] hover:text-[#176b52]"
-              disabled={isLoading}
-              onClick={loadData}
-              type="button"
-            >
-              <MdRefresh className="h-5 w-5" />
-              Muat Ulang
-            </button>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[#b9c8c1] px-4 text-sm font-semibold text-[#243b34] transition hover:border-[#176b52] hover:text-[#176b52] disabled:cursor-not-allowed disabled:text-[#7a8b84]"
+                disabled={isExportingPdf}
+                onClick={handleExportPrediksiPdf}
+                type="button"
+              >
+                <MdPictureAsPdf className="h-5 w-5" />
+                {isExportingPdf ? "Mengunduh..." : "Export PDF Prediksi"}
+              </button>
+              <button
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-[#b9c8c1] px-4 text-sm font-semibold text-[#243b34] transition hover:border-[#176b52] hover:text-[#176b52]"
+                disabled={isLoading}
+                onClick={loadData}
+                type="button"
+              >
+                <MdRefresh className="h-5 w-5" />
+                Muat Ulang
+              </button>
+            </div>
           </div>
 
           {isLoading ? (

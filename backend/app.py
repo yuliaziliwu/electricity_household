@@ -4,6 +4,7 @@ from flask_cors import CORS
 from routes.admin import admin_bp
 from routes.alat import alat_bp
 from routes.auth import auth_bp
+from routes.laporan import laporan_bp
 from routes.pemakaian import pemakaian_bp
 from routes.prediksi import prediksi_bp
 from routes.rekomendasi import rekomendasi_bp
@@ -35,6 +36,7 @@ def register_blueprints(app):
     app.register_blueprint(pemakaian_bp, url_prefix='/api/pemakaian')
     app.register_blueprint(prediksi_bp, url_prefix='/api/prediksi')
     app.register_blueprint(rekomendasi_bp, url_prefix='/api/rekomendasi')
+    app.register_blueprint(laporan_bp, url_prefix='/api/laporan')
 
 
 app = create_app()
