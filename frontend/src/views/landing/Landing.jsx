@@ -42,14 +42,6 @@ export default function Landing() {
             className="absolute inset-0 h-full w-full object-cover"
             src={authImg}
           />
-          <div className="absolute inset-x-0 bottom-0 bg-slate-950/75 p-6 text-white">
-            {/* <p className="text-sm font-semibold uppercase tracking-normal text-emerald-200">
-              Modul 1
-            </p>
-            <p className="mt-2 text-2xl font-bold">
-              Autentikasi, profil, dan akses berdasarkan role.
-            </p> */}
-          </div>
         </div>
       </section>
     </main>

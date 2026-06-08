@@ -225,9 +225,6 @@ export default function AlatPage() {
         </button>
 
         <div className="mb-6 rounded-lg border border-[#12312b] bg-[#12312b] p-6 text-white shadow-lg">
-          <p className="text-sm font-semibold uppercase tracking-normal text-emerald-200">
-            Modul 4
-          </p>
           <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">
             Input Alat Elektronik
           </h1>

@@ -27,3 +27,33 @@ input.defaultCheckbox::before {
 input:checked.defaultCheckbox::before { 
 	opacity: 1;
 }
+
+@media print {
+	body {
+		background: #ffffff !important;
+		color: #13201d !important;
+	}
+
+	.no-print {
+		display: none !important;
+	}
+
+	.print-dashboard {
+		max-width: none !important;
+		width: 100% !important;
+	}
+
+	.print-dashboard main,
+	.print-dashboard section,
+	.print-dashboard div {
+		box-shadow: none !important;
+	}
+
+	.print-dashboard .apexcharts-toolbar {
+		display: none !important;
+	}
+
+	@page {
+		margin: 14mm;
+	}
+}

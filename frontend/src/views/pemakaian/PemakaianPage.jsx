@@ -227,9 +227,6 @@ export default function PemakaianPage() {
         </button>
 
         <div className="mb-6 rounded-lg border border-[#12312b] bg-[#12312b] p-6 text-white shadow-lg">
-          <p className="text-sm font-semibold uppercase tracking-normal text-emerald-200">
-            Modul 5
-          </p>
           <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">
             Input Pemakaian Harian
           </h1>
@@ -278,7 +275,7 @@ export default function PemakaianPage() {
             <div>
               <h2 className="text-2xl font-bold">Input Tanggal</h2>
               <p className="mt-1 text-sm text-[#4a5a55]">
-                Nilai awal jam aktual memakai jam default dari Modul 4.
+                Nilai awal jam aktual memakai jam default yang telah anda daftarkan.
               </p>
             </div>
             <label className="block">

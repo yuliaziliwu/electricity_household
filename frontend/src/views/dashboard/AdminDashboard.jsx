@@ -372,9 +372,6 @@ export default function AdminDashboard() {
       <section className="mx-auto max-w-7xl">
         <div className="mb-6 flex flex-col justify-between gap-4 rounded-lg border border-[#12312b] bg-[#12312b] p-6 text-white shadow-lg md:flex-row md:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-normal text-emerald-300">
-              Modul 10 Admin
-            </p>
             <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">
               Pusat Kontrol Aplikasi
             </h1>

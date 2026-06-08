@@ -149,9 +149,6 @@ export default function PrediksiPage() {
 
         <div className="mb-6 flex flex-col justify-between gap-4 rounded-lg border border-[#12312b] bg-[#12312b] p-6 text-white shadow-lg md:flex-row md:items-center">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-normal text-emerald-200">
-              Modul 3
-            </p>
             <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">
               Prediksi Biaya Listrik
             </h1>
