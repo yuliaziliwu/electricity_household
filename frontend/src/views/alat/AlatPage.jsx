@@ -14,6 +14,7 @@ import {
   getAlat,
   updateAlat,
 } from "api/alatApi";
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 
 function createEmptyRow() {
@@ -91,7 +92,7 @@ export default function AlatPage() {
       const response = await getAlat(user.user_id);
       setAlat(response.alat || []);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -143,9 +144,9 @@ export default function AlatPage() {
       const response = await createAlatBulk(user.user_id, payload);
       setAlat(response.alat || []);
       setRows([createEmptyRow()]);
-      setMessage("Alat elektronik berhasil disimpan.");
+      setMessage(APP_MESSAGES.alat.createSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -188,10 +189,10 @@ export default function AlatPage() {
         jam_default_per_hari: Number(editForm.jam_default_per_hari),
       });
       setEditForm(null);
-      setMessage("Alat elektronik berhasil diubah.");
+      setMessage(APP_MESSAGES.alat.updateSuccess);
       await loadAlat();
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -203,10 +204,10 @@ export default function AlatPage() {
 
     try {
       await deleteAlat(user.user_id, alatId);
-      setMessage("Alat elektronik berhasil dihapus.");
+      setMessage(APP_MESSAGES.alat.deleteSuccess);
       await loadAlat();
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     }
   }
 
@@ -270,7 +271,7 @@ export default function AlatPage() {
         >
           <div className="mb-4 flex flex-col justify-between gap-3 md:flex-row md:items-center">
             <div>
-              <h2 className="text-2xl font-bold">Input Bulk Alat</h2>
+              <h2 className="text-2xl font-bold"> Alat Elektronik di Rumah Saya</h2>
               <p className="mt-1 text-sm text-[#4a5a55]">
                 Tambahkan beberapa alat sekaligus dalam satu kali submit.
               </p>

@@ -12,6 +12,7 @@ import {
   getRiwayatRekomendasi,
   markRekomendasiApplied,
 } from "api/rekomendasiApi";
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 
 function formatCurrency(value) {
@@ -142,7 +143,7 @@ export default function RekomendasiPage() {
       const response = await getRiwayatRekomendasi(user.user_id);
       setHistory(response.rekomendasi || []);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -161,10 +162,10 @@ export default function RekomendasiPage() {
       const response = await getRekomendasi(user.user_id);
       const recommendations = response.rekomendasi || [];
       setLatest(recommendations);
-      setMessage("Rekomendasi DSS berhasil dibuat.");
+      setMessage(APP_MESSAGES.rekomendasi.createSuccess);
       await loadHistory();
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsGenerating(false);
     }
@@ -188,9 +189,9 @@ export default function RekomendasiPage() {
           item.rekomendasi_id === rekomendasiId ? updated : item
         )
       );
-      setMessage("Rekomendasi berhasil ditandai sudah diterapkan.");
+      setMessage(APP_MESSAGES.rekomendasi.applySuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setApplyingId(null);
     }

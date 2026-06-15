@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MdPersonAdd } from "react-icons/md";
 
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 import useTarifOptions from "hooks/useTarifOptions";
 
@@ -43,10 +44,19 @@ export default function Register() {
         jumlah_penghuni: Number(form.jumlah_penghuni),
       });
 
-      setSuccessMessage("Registrasi berhasil. Silakan login.");
-      setTimeout(() => navigate("/login"), 700);
+      setSuccessMessage(APP_MESSAGES.auth.registerSuccess);
+      setTimeout(
+        () =>
+          navigate("/login", {
+            state: {
+              message: APP_MESSAGES.auth.registerSuccess,
+              type: "success",
+            },
+          }),
+        700
+      );
     } catch (err) {
-      setSubmitError(err.message);
+      setSubmitError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -57,15 +67,11 @@ export default function Register() {
       <section className="mx-auto grid min-h-[calc(100vh-48px)] w-full max-w-6xl items-center gap-6 lg:grid-cols-[1fr_500px]">
         <div className="rounded-lg bg-[#12312b] p-6 text-white shadow-lg md:p-8">
           <div className="mb-5 inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-emerald-100">
-            Registrasi Mandiri
+            Registrasi 
           </div>
           <h1 className="text-4xl font-bold leading-tight md:text-5xl">
             Buat profil awal untuk analisis listrik rumah.
           </h1>
-          <p className="mt-5 text-base leading-7 text-emerald-50">
-            Role pengguna baru otomatis menjadi end_user. Pilihan daya diambil
-            dari tarif aktif yang tersimpan di database.
-          </p>
           <div className="mt-6 rounded-md border border-white/15 bg-white/10 p-4 text-sm leading-6 text-emerald-50">
             Siapkan username, email, password, daya terpasang, dan jumlah
             penghuni untuk membuat profil awal.
@@ -165,7 +171,7 @@ export default function Register() {
                 disabled={isLoading}
               >
                 <option value="">
-                  {isLoading ? "Memuat daya..." : "Pilih daya"}
+                  {isLoading ? "Memuat daya..." : "Daya Rumah"}
                 </option>
                 {options.map((option) => (
                   <option key={option.daya_va} value={option.daya_va}>

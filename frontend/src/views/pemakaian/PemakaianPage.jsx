@@ -14,6 +14,7 @@ import {
   getPemakaian,
   updatePemakaian,
 } from "api/pemakaianApi";
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 
 const today = new Date().toISOString().slice(0, 10);
@@ -88,7 +89,7 @@ export default function PemakaianPage() {
       setPemakaian(pemakaianResponse.pemakaian || []);
       setRingkasan(pemakaianResponse.ringkasan_harian || []);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +126,7 @@ export default function PemakaianPage() {
       return Number.isNaN(value) || value < 0 || value > 24;
     });
     if (invalidJam) {
-      setError("Jam aktual harus 0 sampai 24 untuk semua alat.");
+      setError(APP_MESSAGES.pemakaian.invalidJam);
       return;
     }
 
@@ -141,9 +142,9 @@ export default function PemakaianPage() {
       const response = await createPemakaianBulk(user.user_id, payload);
       setPemakaian(response.pemakaian || []);
       setRingkasan(response.ringkasan_harian || []);
-      setMessage("Pemakaian harian berhasil disimpan.");
+      setMessage(APP_MESSAGES.pemakaian.createSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -169,7 +170,7 @@ export default function PemakaianPage() {
 
     const jamAktual = Number(editForm.jam_aktual);
     if (!editForm.tanggal || Number.isNaN(jamAktual) || jamAktual < 0 || jamAktual > 24) {
-      setError("Tanggal dan jam aktual 0 sampai 24 wajib diisi.");
+      setError(APP_MESSAGES.pemakaian.invalidJam);
       return;
     }
 
@@ -190,9 +191,9 @@ export default function PemakaianPage() {
       setPemakaian(response.pemakaian || []);
       setRingkasan(response.ringkasan_harian || []);
       setEditForm(null);
-      setMessage("Pemakaian harian berhasil diubah.");
+      setMessage(APP_MESSAGES.pemakaian.updateSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -206,9 +207,9 @@ export default function PemakaianPage() {
       const response = await deletePemakaian(user.user_id, pemakaianId);
       setPemakaian(response.pemakaian || []);
       setRingkasan(response.ringkasan_harian || []);
-      setMessage("Pemakaian harian berhasil dihapus.");
+      setMessage(APP_MESSAGES.pemakaian.deleteSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     }
   }
 

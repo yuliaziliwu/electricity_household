@@ -14,6 +14,7 @@ import {
   getTagihan,
   updateTagihan,
 } from "api/tagihanApi";
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 
 const monthOptions = [
@@ -58,8 +59,12 @@ function formatCurrency(value) {
 }
 
 function validateRows(rows) {
-  if (rows.length < 3 || rows.length > 6) {
-    return "Input tagihan wajib 3 sampai 6 baris.";
+  if (rows.length < 3) {
+    return APP_MESSAGES.tagihan.minRows;
+  }
+
+  if (rows.length > 6) {
+    return APP_MESSAGES.tagihan.maxRows;
   }
 
   const keys = new Set();
@@ -75,7 +80,7 @@ function validateRows(rows) {
 
     const key = `${row.bulan}-${row.tahun}`;
     if (keys.has(key)) {
-      return "Bulan dan tahun tidak boleh duplikat.";
+      return APP_MESSAGES.tagihan.duplicateMonthYear;
     }
 
     keys.add(key);
@@ -120,7 +125,7 @@ export default function TagihanPage() {
       const response = await getTagihan(user.user_id);
       setHistory(response.tagihan || []);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -180,9 +185,9 @@ export default function TagihanPage() {
       const response = await createTagihanBulk(user.user_id, payload);
       setHistory(response.tagihan || []);
       setRows([createEmptyRow(), createEmptyRow(), createEmptyRow()]);
-      setMessage("Tagihan berhasil disimpan.");
+      setMessage(APP_MESSAGES.tagihan.createSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -224,10 +229,10 @@ export default function TagihanPage() {
         biaya: editForm.biaya ? Number(editForm.biaya) : null,
       });
       setEditForm(null);
-      setMessage("Tagihan berhasil diubah.");
+      setMessage(APP_MESSAGES.tagihan.updateSuccess);
       await loadHistory();
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -239,10 +244,10 @@ export default function TagihanPage() {
 
     try {
       await deleteTagihan(user.user_id, tagihanId);
-      setMessage("Tagihan berhasil dihapus.");
+      setMessage(APP_MESSAGES.tagihan.deleteSuccess);
       await loadHistory();
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     }
   }
 

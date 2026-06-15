@@ -14,6 +14,7 @@ import {
   getLatestPrediksi,
   getPrediksiHistory,
 } from "api/prediksiApi";
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 
 const monthOptions = [
@@ -66,7 +67,7 @@ function formatDate(value) {
 
 function getMethodLabel(value) {
   if (value === "hybrid_harian") {
-    return "Hybrid Harian";
+    return "hybrid_harian";
   }
 
   return "Histori Tagihan";
@@ -109,7 +110,7 @@ export default function PrediksiPage() {
       setLatest(latestResponse.prediksi || null);
       setHistory(historyResponse.prediksi || []);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -127,10 +128,10 @@ export default function PrediksiPage() {
     try {
       const response = await createPrediksi(user.user_id);
       setLatest(response.prediksi || null);
-      setMessage("Prediksi tagihan bulan depan berhasil dibuat.");
+      setMessage(APP_MESSAGES.prediksi.createSuccess);
       await loadData();
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsGenerating(false);
     }
@@ -147,9 +148,9 @@ export default function PrediksiPage() {
 
     try {
       await downloadPrediksiPdf(user.user_id);
-      setMessage("Laporan prediksi PDF berhasil diunduh.");
+      setMessage(APP_MESSAGES.prediksi.exportSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsExportingPdf(false);
     }

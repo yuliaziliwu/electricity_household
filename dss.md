@@ -379,3 +379,11 @@ Frontend harus memiliki fitur:
 5. Riwayat rekomendasi
 
 Frontend hanya bertugas menampilkan hasil DSS dari backend. Logic utama DSS tidak boleh ditaruh di frontend.
+
+
+Bagian ini memuat konsep-konsep dasar yang mendukung Proyek. Teori yang ditulis bukan teori umum yang terlalu luas, tetapi yang berkaitan langsung dengan topik dan studi kasus yang dikerjakan.
+1.	Definisi dan konsep utama yang sesuai dengan topik proyek. 
+Sesuaikan dengan kategori proyek masing-masing:
+-	Proyek Penerapan AI: jelaskan algoritma atau model yang digunakan (misal: CNN, decision tree) dan cara kerjanya secara sederhana
+2.	Teknologi, framework, atau tools yang digunakan dalam proyek, disertai penjelasan singkat mengenai fungsi dan perannya dalam solusi yang dikembangkan.
+3.	Menjelaskan profil tempat/lokasi penerapan solusi, mencakup nama dan profil singkat, kondisi yang relevan, serta kebutuhan atau masalah yang ingin diselesaikan.

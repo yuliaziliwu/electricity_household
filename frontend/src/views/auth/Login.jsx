@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MdLogin } from "react-icons/md";
 
+import { normalizeErrorMessage } from "constants/messages";
 import useAuth, { getRedirectPathByRole } from "hooks/useAuth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
   const [form, setForm] = useState({
     username: "",
@@ -13,6 +15,10 @@ export default function Login() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [routeFeedback, setRouteFeedback] = useState(() => ({
+    message: location.state?.message || "",
+    type: location.state?.type || "error",
+  }));
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -25,13 +31,14 @@ export default function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
+    setRouteFeedback({ message: "", type: "error" });
     setIsSubmitting(true);
 
     try {
       const user = await login(form);
       navigate(getRedirectPathByRole(user.role), { replace: true });
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -78,6 +85,18 @@ export default function Login() {
           {error ? (
             <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
+            </div>
+          ) : null}
+
+          {routeFeedback.message ? (
+            <div
+              className={`mb-4 rounded-md border px-4 py-3 text-sm ${
+                routeFeedback.type === "success"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-red-200 bg-red-50 text-red-700"
+              }`}
+            >
+              {routeFeedback.message}
             </div>
           ) : null}
 

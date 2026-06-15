@@ -18,6 +18,7 @@ import { downloadBulananPrediksiPdf } from "api/laporanApi";
 import { getPemakaian } from "api/pemakaianApi";
 import { getLatestPrediksi } from "api/prediksiApi";
 import { getTagihan } from "api/tagihanApi";
+import { APP_MESSAGES, normalizeErrorMessage } from "constants/messages";
 import useAuth from "hooks/useAuth";
 
 const quickActions = [
@@ -146,7 +147,7 @@ export default function UserDashboard() {
       });
       setLatestPrediksi(prediksiResponse.prediksi || null);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -299,9 +300,9 @@ export default function UserDashboard() {
 
     try {
       await downloadBulananPrediksiPdf(user.user_id);
-      setMessage("Laporan PDF berhasil diunduh.");
+      setMessage(APP_MESSAGES.laporan.exportSuccess);
     } catch (err) {
-      setError(err.message);
+      setError(normalizeErrorMessage(err));
     } finally {
       setIsExportingPdf(false);
     }
@@ -318,7 +319,7 @@ export default function UserDashboard() {
               Dashboard 
             </p>
             <h1 className="mt-2 text-3xl font-bold leading-tight md:text-4xl">
-              Dashboard Konsumsi Listrik
+              Ayo Hemat Listrik! Using Electricity Wisely
             </h1>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-emerald-50">
               Halo, {user?.username}. Pantau tagihan, konsumsi harian, prediksi,
@@ -504,7 +505,7 @@ export default function UserDashboard() {
                     <p className="text-sm text-[#5a6a64]">Metode</p>
                     <p className="mt-2 text-xl font-bold">
                       {latestPrediksi.metode === "hybrid_harian"
-                        ? "Hybrid Harian"
+                        ? "hybrid_harian"
                         : "Histori Tagihan"}
                     </p>
                   </div>
